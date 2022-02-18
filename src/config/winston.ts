@@ -41,7 +41,7 @@ const levels: winston.config.AbstractConfigSetLevels = {
   debug: 4,
 };
 
-const colors = {
+const colors: winston.config.AbstractConfigSetColors = {
   error: "red",
   warn: "yellow",
   info: "green",
@@ -49,18 +49,23 @@ const colors = {
   debug: "white",
 };
 
-const transports: winston.transport | winston.transport[] | undefined = [
+const transports: winston.transport | winston.transport[] = [
   new winston.transports.Console(options.console),
   new winston.transports.File(options.file),
 ];
 
 winston.addColors(colors);
 
-const logger: winston.LoggerOptions = winston.createLogger({
+export const logger: winston.Logger = winston.createLogger({
   level: logLevel(),
   levels,
   format,
   transports,
+  exitOnError: false,
 });
 
-export default logger;
+export const loggerStream = {
+  write: (message: string) => {
+    logger.info(message);
+  },
+};
